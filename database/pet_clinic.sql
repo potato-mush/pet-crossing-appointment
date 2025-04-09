@@ -22,10 +22,15 @@ CREATE TABLE pets (
 
 CREATE TABLE appointments (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
-    pet_id INT,
+    user_id INT,
+    pet_name VARCHAR(100),
+    service_type VARCHAR(50),
     appointment_date DATE,
-    reason VARCHAR(255),
-    FOREIGN KEY (pet_id) REFERENCES pets(pet_id)
+    appointment_time TIME,
+    status ENUM('pending', 'confirmed', 'completed', 'cancelled') DEFAULT 'pending',
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE veterinarians (

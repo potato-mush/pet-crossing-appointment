@@ -27,20 +27,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signup'])) {
     // Check if email exists
     $check_email = "SELECT * FROM users WHERE email = ?";
     $stmt = $conn->prepare($check_email);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    if ($stmt->get_result()->num_rows > 0) {
-        $signup_error = "Email already exists!";
+    if ($stmt === false) {
+        $signup_error = "Prepare failed: " . $conn->error;
     } else {
-        $sql = "INSERT INTO users (first_name, last_name, email, password, phone) VALUES (?, ?, ?, ?, ?)";
-        $stmt->bind_param("sssss", $first_name, $last_name, $email, $password, $phone);
-        if ($stmt->execute()) {
-            $_SESSION['success'] = "Account created successfully! Please login.";
-            header("Location: login.php");
-            exit();
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        if ($stmt->get_result()->num_rows > 0) {
+            $signup_error = "Email already exists!";
         } else {
-            $signup_error = "Registration failed. Please try again.";
+            $stmt->close();
+            $sql = "INSERT INTO users (first_name, last_name, email, password, phone) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            if ($stmt === false) {
+                $signup_error = "Prepare failed: " . $conn->error;
+            } else {
+                $stmt->bind_param("sssss", $first_name, $last_name, $email, $password, $phone);
+                if ($stmt->execute()) {
+                    $_SESSION['success'] = "Account created successfully! Please login.";
+                    $stmt->close();
+                    header("Location: login.php");
+                    exit();
+                } else {
+                    $signup_error = "Registration failed. Please try again.";
+                }
+            }
         }
+        $stmt->close();
     }
 }
 
@@ -50,22 +62,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
 
     $sql = "SELECT * FROM users WHERE email = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['email'] = $user['email'];
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            $error = "Invalid password!";
-        }
+    if ($stmt === false) {
+        $error = "Prepare failed: " . $conn->error;
     } else {
-        $error = "Email not found!";
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['email'] = $user['email'];
+                $stmt->close();
+                header("Location: index.php");
+                exit();
+            } else {
+                $error = "Invalid password!";
+            }
+        } else {
+            $error = "Email not found!";
+        }
+        $stmt->close();
     }
 }
 ?>

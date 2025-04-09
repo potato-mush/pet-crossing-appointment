@@ -28,27 +28,68 @@
 }
 
 .sidebar {
-    width: 250px;
-    background: #343a40;
+    width: 260px;
+    height: 100vh;
+    background: #2c3e50;
     color: white;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+}
+
+.sidebar-header {
     padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.sidebar ul {
+.logo {
+    width: 40px;
+    height: 40px;
+}
+
+.nav-links {
     list-style: none;
-    padding: 0;
+    padding: 20px 0;
+    margin: 0;
+    flex-grow: 1;
 }
 
-.sidebar a {
-    color: white;
+.nav-links li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #fff;
     text-decoration: none;
-    padding: 10px;
-    display: block;
+    transition: all 0.3s ease;
+    gap: 10px;
+}
+
+.nav-links li a:hover,
+.nav-links li a.active {
+    background: rgba(255,255,255,0.1);
+}
+
+.nav-links li a i {
+    width: 20px;
+    text-align: center;
+}
+
+.badge {
+    margin-left: auto;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 .content {
-    flex: 1;
+    margin-left: 260px;
     padding: 20px;
+    width: calc(100% - 260px);
 }
 
 .page {
@@ -57,4 +98,66 @@
 
 .page.active {
     display: block;
+}
+
+/* Dark theme dropdown customization */
+.dropdown-menu-dark {
+    background: #34495e;
+}
+
+.dropdown-item {
+    color: rgba(255,255,255,0.8);
+}
+
+.dropdown-item:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+/* Appointments Page Styles */
+.appointments-list {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+}
+
+.appointment-card {
+    transition: transform 0.2s;
+}
+
+.appointment-card:hover {
+    transform: translateY(-2px);
+}
+
+.appointment-details i {
+    width: 20px;
+    color: #666;
+}
+
+#calendar {
+    height: 600px;
+}
+
+.fc-event {
+    cursor: pointer;
+}
+
+.fc-event:hover {
+    opacity: 0.9;
+}
+
+.appointment-list {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+#appointmentCalendar {
+    min-height: 700px;
+}
+
+.list-group-item {
+    transition: background-color 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: rgba(0,0,0,0.02);
 }

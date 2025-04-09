@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,19 +12,7 @@
     <link rel="stylesheet" href="assets/css/animations.css">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">
-            <img src="assets/images/logo.png" alt="Pet Crossing Logo" height="50">
-        </div>
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="login.php">Login / Sign Up</a></li>
-        </ul>
-    </nav>
+    <?php include('includes/header.php'); ?>
 
     <!-- Hero Section -->
     <section id="home" class="hero parallax-section">
@@ -29,7 +20,11 @@
         <div class="hero-content parallax-content fade-in">
             <h1>Welcome to Pet Crossing</h1>
             <p>Your trusted partner in pet care</p>
-            <a href="appointment.php" class="btn-appointment">Book an Appointment</a>
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <a href="appointment.php" class="btn-appointment">Book an Appointment</a>
+            <?php else: ?>
+                <a href="login.php" class="btn-appointment">Book Appointment</a>
+            <?php endif; ?>
         </div>
     </section>
 
@@ -101,34 +96,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer id="contact" class="footer">
-        <div class="footer-content fade-in">
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p><i class="fas fa-map-marker-alt"></i> 123 Pet Street, Veterinary District</p>
-                <p><i class="fas fa-phone"></i> (123) 456-7890</p>
-                <p><i class="fas fa-envelope"></i> info@petcrossing.com</p>
-            </div>
-            <div class="footer-section">
-                <h3>Opening Hours</h3>
-                <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
-                <p>Saturday: 9:00 AM - 4:00 PM</p>
-                <p>Sunday: Closed</p>
-            </div>
-            <div class="footer-section">
-                <h3>Follow Us</h3>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Pet Crossing. All rights reserved.</p>
-        </div>
-    </footer>
+    <?php include('includes/footer.php'); ?>
 
     <script src="assets/js/scroll-animations.js"></script>
     <script src="assets/js/smooth-scroll.js"></script>

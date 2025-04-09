@@ -1,26 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet Crossing - Animal Clinic</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/landing.css">
-</head>
-<body>
-    <nav class="navbar">
+<!-- Navbar -->
+<nav class="navbar">
         <div class="logo">
-            <img src="assets/images/logo.png" alt="Pet Clinic Logo">
-            <span class="pet-text">pet</span>
-            <span class="crossing-text">crossing</span>
+            <img src="assets/images/logo.png" alt="Pet Crossing Logo" height="50">
         </div>
         <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="login.php" class="btn-login">Login</a></li>
-            <li><a href="signup.php" class="btn-signup">Sign Up</a></li>
+            <li><a href="index.php#home">Home</a></li>
+            <li><a href="index.php#services">Services</a></li>
+            <li><a href="index.php#about">About</a></li>
+            <li><a href="index.php#contact">Contact</a></li>
+            <li>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <a href="logout.php">Sign Out</a>
+                <?php else: ?>
+                    <a href="login.php">Login / Sign Up</a>
+                <?php endif; ?>
+            </li>
         </ul>
     </nav>
