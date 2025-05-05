@@ -7,7 +7,7 @@ if(!isset($_SESSION['admin_id'])) {
 require_once('includes/db_connection.php');
 
 // Update query to match the column name in database
-$query = "SELECT COUNT(*) as count FROM appointments WHERE status = 'pending'";
+$query = "SELECT COUNT(*) as count FROM appointments a WHERE a.status = 'pending'";
 $result = mysqli_query($conn, $query);
 $pending_count = mysqli_fetch_assoc($result)['count'];
 ?>
@@ -15,29 +15,27 @@ $pending_count = mysqli_fetch_assoc($result)['count'];
 <html>
 <head>
     <title>Admin Dashboard</title>
+    <link rel="icon" href="../assets/images/favicon.ico" type="image/x-icon"> <!-- Corrected path -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 </head>
 <body>
-    <div class="dashboard-container">
+    <div class="dashboard-container d-flex">
         <nav class="sidebar">
             <div class="sidebar-header">
                 <img src="../assets/images/logo.png" alt="Logo" class="logo">
                 <h3>Admin Panel</h3>
             </div>
-            
             <ul class="nav-links">
                 <li>
-                    <a href="javascript:void(0)" data-page="dashboard" class="active">
+                    <a href="index.php" class="active">
                         <i class="fas fa-home"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" data-page="appointments">
+                    <a href="pages/appointments.php">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Appointments</span>
                         <?php if($pending_count > 0): ?>
@@ -46,19 +44,18 @@ $pending_count = mysqli_fetch_assoc($result)['count'];
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" data-page="services">
+                    <a href="pages/services.php">
                         <i class="fas fa-concierge-bell"></i>
                         <span>Services</span>
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" data-page="users">
+                    <a href="pages/users.php">
                         <i class="fas fa-users"></i>
                         <span>Users</span>
                     </a>
                 </li>
             </ul>
-
             <div class="sidebar-footer">
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -74,13 +71,12 @@ $pending_count = mysqli_fetch_assoc($result)['count'];
                 </div>
             </div>
         </nav>
-        
-        <main class="content">
+        <main class="content flex-grow-1">
             <div id="dashboard" class="page active">
                 <?php include('pages/dashboard.php'); ?>
             </div>
             <div id="appointments" class="page">
-                <?php include('pages/appointments.php'); ?> <!-- Ensure this line exists -->
+                <?php include('pages/appointments.php'); ?>
             </div>
             <div id="services" class="page"></div>
             <div id="users" class="page"></div>
@@ -88,6 +84,5 @@ $pending_count = mysqli_fetch_assoc($result)['count'];
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/dashboard.js"></script>
-
 </body>
 </html>

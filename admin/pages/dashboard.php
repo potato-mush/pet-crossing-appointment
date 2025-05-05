@@ -17,71 +17,85 @@ $result = mysqli_query($conn, $query);
 $total_users = mysqli_fetch_assoc($result)['total'];
 ?>
 
-<div class="container-fluid">
-    <h2 class="mb-4">Dashboard</h2>
-    
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Total Appointments</h5>
-                    <h2><?php echo $total_appointments; ?></h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Today's Appointments</h5>
-                    <h2><?php echo $today_appointments; ?></h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Total Users</h5>
-                    <h2><?php echo $total_users; ?></h2>
-                </div>
-            </div>
-        </div>
-    </div>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Recent Appointments</h5>
+<body>
+    <div class="dashboard-container d-flex">
+
+                <main class="content flex-grow-1">
+            <div class="container-fluid">
+                <h2 class="mb-4">Dashboard</h2>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Appointments</h5>
+                                <h2><?php echo $total_appointments; ?></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Today's Appointments</h5>
+                                <h2><?php echo $today_appointments; ?></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Users</h5>
+                                <h2><?php echo $total_users; ?></h2>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Pet Name</th>
-                                    <th>Service</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $query = "SELECT * FROM appointments ORDER BY appointment_date DESC LIMIT 5";
-                                $result = mysqli_query($conn, $query);
-                                while($row = mysqli_fetch_assoc($result)) {
-                                    echo "<tr>";
-                                    echo "<td>" . $row['appointment_date'] . "</td>";
-                                    echo "<td>" . $row['pet_name'] . "</td>";
-                                    echo "<td>" . $row['service_type'] . "</td>";
-                                    echo "<td>" . $row['status'] . "</td>";
-                                    echo "</tr>";
-                                }
-                                ?>
-                            </tbody>
-                        </table>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Recent Appointments</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Pet Name</th>
+                                                <th>Service</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $query = "SELECT * FROM appointments ORDER BY appointment_date DESC LIMIT 5";
+                                            $result = mysqli_query($conn, $query);
+                                            while($row = mysqli_fetch_assoc($result)) {
+                                                echo "<tr>";
+                                                echo "<td>" . $row['appointment_date'] . "</td>";
+                                                echo "<td>" . $row['pet_name'] . "</td>";
+                                                echo "<td>" . $row['service_type'] . "</td>";
+                                                echo "<td>" . $row['status'] . "</td>";
+                                                echo "</tr>";
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>

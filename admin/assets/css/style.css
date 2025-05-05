@@ -164,6 +164,7 @@
 #calendar {
     max-width: 100%;
     margin: 0 auto;
+    min-height: 600px;
 }
 
 .list-group-item .btn {
