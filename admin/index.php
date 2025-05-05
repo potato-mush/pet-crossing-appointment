@@ -25,8 +25,8 @@ $pending_count = mysqli_fetch_assoc($result)['count'];
     <div class="dashboard-container">
         <nav class="sidebar">
             <div class="sidebar-header">
-                <img src="assets/images/logo.png" alt="Logo" class="logo">
-                <h2>Admin Panel</h2>
+                <img src="../assets/images/logo.png" alt="Logo" class="logo">
+                <h3>Admin Panel</h3>
             </div>
             
             <ul class="nav-links">
@@ -62,7 +62,7 @@ $pending_count = mysqli_fetch_assoc($result)['count'];
             <div class="sidebar-footer">
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="assets/images/admin-avatar.png" alt="Admin" width="32" height="32" class="rounded-circle me-2">
+                        <img src="../assets/images/avatar.jpg" alt="Admin" width="32" height="32" class="rounded-circle me-2">
                         <strong>Admin</strong>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
@@ -79,12 +79,15 @@ $pending_count = mysqli_fetch_assoc($result)['count'];
             <div id="dashboard" class="page active">
                 <?php include('pages/dashboard.php'); ?>
             </div>
-            <div id="appointments" class="page"></div>
+            <div id="appointments" class="page">
+                <?php include('pages/appointments.php'); ?> <!-- Ensure this line exists -->
+            </div>
             <div id="services" class="page"></div>
             <div id="users" class="page"></div>
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/dashboard.js"></script>
+
 </body>
 </html>

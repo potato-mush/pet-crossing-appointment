@@ -133,10 +133,6 @@
     color: #666;
 }
 
-#calendar {
-    height: 600px;
-}
-
 .fc-event {
     cursor: pointer;
 }
@@ -150,14 +146,26 @@
     overflow-y: auto;
 }
 
-#appointmentCalendar {
-    min-height: 700px;
-}
-
 .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    border-radius: 5px;
     transition: background-color 0.2s;
 }
 
 .list-group-item:hover {
     background-color: rgba(0,0,0,0.02);
+}
+
+#calendar {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.list-group-item .btn {
+    margin-left: 5px;
 }

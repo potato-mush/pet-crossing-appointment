@@ -22,6 +22,7 @@ $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Appointment - Pet Crossing</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/landing.css">
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/appointment.css">
@@ -37,6 +38,7 @@ $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="booking-form">
                 <h2>Book an Appointment</h2>
                 <form id="appointmentForm" method="POST">
+                    <input type="hidden" id="user_id" value="<?= $_SESSION['user_id'] ?>"> <!-- Add this line -->
                     <div class="form-group">
                         <label for="service">Service</label>
                         <select name="service" id="service" required>

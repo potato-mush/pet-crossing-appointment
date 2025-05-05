@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
+    const userId = document.getElementById('user_id').value; // Assume user ID is available in a hidden input field
+
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         selectable: true,
@@ -13,7 +15,24 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('appointment_date').value = info.startStr;
             updateTimeSlots();
         },
-        events: 'api/get_appointments.php'
+        events: async function(fetchInfo, successCallback, failureCallback) {
+            try {
+                const response = await fetch('api/get_appointments.php');
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                const events = data.map(appointment => ({
+                    title: `${appointment.pet_name} (${appointment.service_type})`,
+                    start: `${appointment.appointment_date}T${appointment.appointment_time}`,
+                    color: appointment.user_id != userId ? 'gray' : (appointment.status === 'pending' ? 'orange' : 'green')
+                }));
+                successCallback(events);
+            } catch (error) {
+                console.error('Error fetching appointments:', error);
+                failureCallback(error);
+            }
+        }
     });
     calendar.render();
 
@@ -36,12 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         // Validate form
-        const service = document.getElementById('service').value;
+        const serviceSelect = document.getElementById('service');
+        const serviceId = serviceSelect.value; // Get service ID
         const petName = document.getElementById('pet_name').value;
         const date = document.getElementById('appointment_date').value;
         const time = document.getElementById('appointment_time').value;
 
-        if (!service || !petName || !date || !time) {
+        if (!serviceId || !petName || !date || !time) {
             showError('Please fill in all required fields');
             return;
         }
@@ -55,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const formData = new FormData(this);
+            formData.set('service', serviceId); // Send service ID
             const response = await fetch('api/book_appointment.php', {
                 method: 'POST',
                 body: formData

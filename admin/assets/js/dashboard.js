@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+
     // Handle sidebar navigation
     document.querySelectorAll('.sidebar a').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -43,29 +45,79 @@ function viewAppointment(id) {
         });
 }
 
-function updateStatus(id) {
-    const newStatus = prompt('Enter new status (pending/confirmed/completed/cancelled):');
-    if (newStatus) {
-        fetch('api/appointments.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'update_status',
-                id: id,
-                status: newStatus
-            })
+let currentAppointmentId = null;
+
+function openStatusUpdateModal(button) {
+    currentAppointmentId = button.dataset.id;
+    const currentStatus = button.dataset.status;
+    const modal = new bootstrap.Modal(document.getElementById('statusUpdateModal'));
+    document.getElementById('newStatus').value = currentStatus;
+    modal.show();
+}
+
+function submitStatusUpdate() {
+    if (!currentAppointmentId) return;
+    
+    const newStatus = document.getElementById('newStatus').value;
+    updateAppointmentStatus(currentAppointmentId, newStatus);
+}
+
+function updateAppointmentStatus(id, status) {
+    if (!id || !status) {
+        console.error('Missing appointment ID or status');
+        return;
+    }
+
+    fetch('../../api/appointments.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            action: 'update_status',
+            id: id,
+            status: status
         })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Close modal if open
+            const modal = bootstrap.Modal.getInstance(document.getElementById('statusUpdateModal'));
+            if (modal) modal.hide();
+            
+            // Refresh the page to show updated status
+            loadPage('appointments');
+            
+            // Show success message
+            showToast('Success', 'Appointment status updated successfully');
+        } else {
+            throw new Error(data.message || 'Failed to update status');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error', error.message);
+    });
+}
+
+function viewAppointmentDetails(id) {
+    if (!id) return;
+    fetch(`api/appointments.php?action=view&id=${id}`)
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Failed to update status');
-            }
+            const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+            document.getElementById('appointmentDetails').innerHTML = `
+                <p><strong>Client:</strong> ${data.first_name} ${data.last_name}</p>
+                <p><strong>Pet:</strong> ${data.pet_name}</p>
+                <p><strong>Service:</strong> ${data.service_type}</p>
+                <p><strong>Date:</strong> ${data.appointment_date}</p>
+                <p><strong>Time:</strong> ${data.appointment_time}</p>
+                <p><strong>Status:</strong> ${data.status}</p>
+                <p><strong>Notes:</strong> ${data.notes || 'No notes'}</p>
+            `;
+            modal.show();
         });
-    }
 }
 
 function addService() {

@@ -17,7 +17,7 @@ $result = mysqli_query($conn, $query);
         <div class="col-lg-7 mb-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <div id="calendar"></div>
+                    <div id="calendar"></div> <!-- Ensure this div exists -->
                 </div>
             </div>
         </div>
@@ -51,23 +51,21 @@ $result = mysqli_query($conn, $query);
                                         <p class="mb-2"><i class="fas fa-tag me-2"></i><?php echo $row['service_type']; ?></p>
                                     </div>
                                     <div class="appointment-actions mt-2">
-                                        <?php if($row['status'] === 'pending'): ?>
-                                            <button class="btn btn-sm btn-success w-100 mb-1" onclick="updateStatus(<?php echo $row['id']; ?>, 'confirmed')">
-                                                <i class="fas fa-check me-1"></i> Approve Appointment
+                                        <?php if ($row['status'] === 'pending'): ?>
+                                            <button class="btn btn-sm btn-success w-100 mb-1" 
+                                                    onclick="updateAppointmentStatus(<?php echo htmlspecialchars($row['id'] ?? 'null', ENT_QUOTES, 'UTF-8'); ?>, 'confirmed')">
+                                                <i class="fas fa-check me-1"></i> Approve
                                             </button>
                                         <?php endif; ?>
                                         <div class="btn-group w-100">
-                                            <button class="btn btn-sm btn-primary" onclick="viewAppointment(<?php echo $row['id']; ?>)">
+                                            <button class="btn btn-sm btn-primary" 
+                                                    onclick="viewAppointmentDetails(<?php echo htmlspecialchars($row['id'] ?? 'null', ENT_QUOTES, 'UTF-8'); ?>)">
                                                 <i class="fas fa-eye me-1"></i> View
                                             </button>
-                                            <button class="btn btn-sm btn-info" onclick="updateStatus(<?php echo $row['id']; ?>)">
-                                                <i class="fas fa-edit me-1"></i> Update
+                                            <button class="btn btn-sm btn-danger" 
+                                                    onclick="updateAppointmentStatus(<?php echo htmlspecialchars($row['id'] ?? 'null', ENT_QUOTES, 'UTF-8'); ?>, 'cancelled')">
+                                                <i class="fas fa-times me-1"></i> Cancel
                                             </button>
-                                            <?php if($row['status'] === 'pending'): ?>
-                                                <button class="btn btn-sm btn-danger" onclick="updateStatus(<?php echo $row['id']; ?>, 'cancelled')">
-                                                    <i class="fas fa-times me-1"></i> Cancel
-                                                </button>
-                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
@@ -95,6 +93,30 @@ $result = mysqli_query($conn, $query);
     </div>
 </div>
 
+<!-- Add Status Update Modal -->
+<div class="modal fade" id="statusUpdateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Appointment Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <select id="newStatus" class="form-select">
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitStatusUpdate()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
 function getStatusColor($status) {
     switch($status) {
@@ -108,24 +130,61 @@ function getStatusColor($status) {
 ?>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,dayGridDay'
-        },
-        events: 'api/appointments.php?action=calendar_events',
-        eventClick: function(info) {
-            viewAppointment(info.event.id);
-        },
-        eventDidMount: function(info) {
-            info.el.title = info.event.title;
-        },
-        height: 650
+    
+    function viewAppointmentDetails(appointmentId) {
+        if (!appointmentId) return;
+        fetch(`../api/appointments.php?action=view&id=${appointmentId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+                document.getElementById('appointmentDetails').innerHTML = `
+                    <p><strong>Client:</strong> ${data.first_name} ${data.last_name}</p>
+                    <p><strong>Pet:</strong> ${data.pet_name}</p>
+                    <p><strong>Service:</strong> ${data.service_type}</p>
+                    <p><strong>Date:</strong> ${data.appointment_date}</p>
+                    <p><strong>Time:</strong> ${data.appointment_time}</p>
+                    <p><strong>Status:</strong> ${data.status}</p>
+                    <p><strong>Notes:</strong> ${data.notes || 'No notes'}</p>
+                `;
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading appointment details: ' + error.message);
+            });
+    }
+
+    function updateAppointmentStatus(appointmentId, status) {
+        // Update appointment status via AJAX
+    }
+
+    function submitStatusUpdate() {
+        // Submit the new status from the modal
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: '../admin/api/load_appointments.php', // Corrected relative path
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            eventClick: function(info) {
+                viewAppointmentDetails(info.event.id); // Use existing function to view details
+            }
+        });
+        calendar.render();
     });
-    calendar.render();
-});
 </script>
+
